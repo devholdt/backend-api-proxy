@@ -41,6 +41,9 @@ const loginUser = async (email, password) => {
 		email,
 		password,
 	});
+
+	console.log("SERVER RESPONSE - ", response);
+
 	if (response.status === 200) {
 		user.accessToken = response.data.data.accessToken;
 	} else {
