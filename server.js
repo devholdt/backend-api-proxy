@@ -1,16 +1,17 @@
+const http = require("http");
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
-const userController = require("./userController");
+const userRouter = require("./userController");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(cors());
-app.use(bodyParser.json());
-app.use("/user", userController);
+app.use(express.json());
 
-app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+app.use("/user", userRouter);
+
+const server = http.createServer(app);
+
+server.listen(process.env.PORT || 3000, () => {
+	console.log(`Server is running on http://localhost:${server.address().port}`);
 });
