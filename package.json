@@ -1,0 +1,12 @@
+{
+  "name": "backend-api-proxy",
+  "version": "1.0.0",
+  "description": "A simple, reusable backend service for handling API keys and proxying API requests for multiple front-end applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
