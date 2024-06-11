@@ -31,8 +31,17 @@ const registerUser = async (username, email, password) => {
 };
 
 const loginUser = async (email, password) => {
+	console.log("Attempting to log in user:", email);
+
 	const user = getUserByEmail(email);
-	if (!user || !(await bcrypt.compare(password, user.password))) {
+	if (!user) {
+		console.log("User not found:", email);
+		throw new Error("Invalid email or password");
+	}
+
+	const isPasswordValid = await bcrypt.compare(password, user.password);
+	if (!isPasswordValid) {
+		console.log("Invalid password for user:", email);
 		throw new Error("Invalid email or password");
 	}
 
@@ -41,12 +50,10 @@ const loginUser = async (email, password) => {
 		email,
 		password,
 	});
-
-	console.log("SERVER RESPONSE - ", response);
-
 	if (response.status === 200) {
 		user.accessToken = response.data.data.accessToken;
 	} else {
+		console.log("Noroff API login failed:", response.data);
 		throw new Error("Noroff API login failed");
 	}
 
