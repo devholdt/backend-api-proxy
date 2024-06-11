@@ -7,9 +7,7 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Use CORS middleware
 app.use(cors());
-
 app.use(bodyParser.json());
 app.use("/user", userController);
 

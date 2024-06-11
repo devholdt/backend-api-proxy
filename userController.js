@@ -6,8 +6,7 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
 	try {
-		const { username, email, password } = req.body;
-		const user = await registerUser(username, email, password);
+		const user = await registerUser(req.body);
 		res.status(201).json({ message: "User registered successfully", user });
 	} catch (error) {
 		res.status(400).json({ error: error.message });
@@ -28,8 +27,8 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", authenticateToken, (req, res) => {
 	try {
-		const { username } = req.user;
-		logoutUser(username);
+		const { email } = req.user;
+		logoutUser(email);
 		res.status(200).json({ message: "User logged out successfully" });
 	} catch (error) {
 		res.status(400).json({ error: error.message });
