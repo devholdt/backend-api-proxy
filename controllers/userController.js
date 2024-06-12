@@ -6,14 +6,11 @@ exports.registerUser = async (req, res) => {
 	const { name, email, password, avatar } = req.body;
 
 	try {
-		// Register the user
 		const registerResponse = await axios.post(`${apiBaseUrl}/auth/register`, {
 			name,
 			email,
 			password,
-			avatar: {
-				url: avatar,
-			},
+			avatar: { url: avatar },
 		});
 
 		if (registerResponse.status === 201) {
@@ -30,18 +27,25 @@ exports.registerUser = async (req, res) => {
 					user: loginUser,
 				});
 			} else {
-				return res.status(400).json({ message: "Login failed" });
+				console.error("Login failed:", loginResponse.data);
+				return res
+					.status(400)
+					.json({ message: "Login failed", error: loginResponse.data });
 			}
 		} else {
-			return res.status(400).json({ message: "Registration failed" });
+			console.error("Registration failed:", registerResponse.data);
+			return res
+				.status(400)
+				.json({ message: "Registration failed", error: registerResponse.data });
 		}
 	} catch (error) {
 		console.error(
 			"Error registering user:",
 			error.response ? error.response.data : error.message
 		);
-		return res
-			.status(500)
-			.json({ message: "Error registering user", error: error.message });
+		return res.status(500).json({
+			message: "Error registering user",
+			error: error.response ? error.response.data : error.message,
+		});
 	}
 };
