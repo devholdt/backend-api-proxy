@@ -15,8 +15,6 @@ exports.registerUser = async (req, res) => {
 		});
 
 		if (registerResponse.status === 200) {
-			const user = registerResponse.data;
-
 			// Automatically login the user
 			const loginResponse = await axios.post(`${apiBaseUrl}/login`, {
 				email,
@@ -26,13 +24,16 @@ exports.registerUser = async (req, res) => {
 			if (loginResponse.status === 200) {
 				const loginUser = loginResponse.data;
 
-				// Store user data securely (e.g., in a database, or temporarily in memory)
-				// For demonstration, we're sending it back in the response
+				// Send back the user data and token
 				return res.status(200).json({
 					message: "User registration and login successful",
 					user: loginUser,
 				});
+			} else {
+				return res.status(400).json({ message: "Login failed" });
 			}
+		} else {
+			return res.status(400).json({ message: "Registration failed" });
 		}
 	} catch (error) {
 		return res
