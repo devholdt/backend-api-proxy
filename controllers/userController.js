@@ -6,12 +6,20 @@ exports.registerUser = async (req, res) => {
 	const { name, email, password, avatar } = req.body;
 
 	try {
-		const registerResponse = await axios.post(`${apiBaseUrl}/auth/register`, {
+		const registrationData = {
 			name,
 			email,
 			password,
-			avatar: { url: avatar },
-		});
+		};
+
+		if (avatar) {
+			registrationData.avatar = { url: avatar };
+		}
+
+		const registerResponse = await axios.post(
+			`${apiBaseUrl}/auth/register`,
+			registrationData
+		);
 
 		if (registerResponse.status === 201) {
 			const loginResponse = await axios.post(`${apiBaseUrl}/auth/login`, {
