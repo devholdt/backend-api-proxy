@@ -1,8 +1,8 @@
 const axios = require("axios");
+const User = require("../models/User");
 const { generateToken, verifyToken } = require("../utils/jwt");
 
 const apiBaseUrl = process.env.API_BASE_URL;
-let users = [];
 
 exports.registerUser = async (req, res) => {
 	const { name, email, password, avatar } = req.body;
@@ -27,7 +27,15 @@ exports.registerUser = async (req, res) => {
 			if (loginResponse.status === 200) {
 				const loginUser = loginResponse.data;
 
-				users.push(loginUser);
+				const newUser = new User({
+					name: loginUser.name,
+					email: loginUser.email,
+					password,
+					avatar,
+					accessToken: loginUser.accessToken,
+				});
+
+				await newUser.save();
 
 				const token = generateToken(loginUser);
 
@@ -47,6 +55,10 @@ exports.registerUser = async (req, res) => {
 				.json({ message: "Registration failed", error: registerResponse.data });
 		}
 	} catch (error) {
+		console.error(
+			"Error registering user:",
+			error.response ? error.response.data : error.message
+		);
 		return res.status(500).json({
 			message: "Error registering user",
 			error: error.response ? error.response.data : error.message,
@@ -54,7 +66,7 @@ exports.registerUser = async (req, res) => {
 	}
 };
 
-exports.getUserProfile = (req, res) => {
+exports.getUserProfile = async (req, res) => {
 	const token = req.headers["authorization"];
 	if (!token) {
 		return res.status(401).json({ message: "No token provided" });
@@ -65,10 +77,17 @@ exports.getUserProfile = (req, res) => {
 		return res.status(401).json({ message: "Failed to authenticate token" });
 	}
 
-	const user = users.find((u) => u.id === decoded.id);
-	if (!user) {
-		return res.status(404).json({ message: "User not found" });
-	}
+	try {
+		const user = await User.findOne({ email: decoded.email });
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
 
-	res.status(200).json({ user });
+		res.status(200).json({ user });
+	} catch (error) {
+		console.error("Error fetching user profile:", error.message);
+		res
+			.status(500)
+			.json({ message: "Error fetching user profile", error: error.message });
+	}
 };
