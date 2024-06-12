@@ -7,10 +7,16 @@ const apiBaseUrl = process.env.API_BASE_URL;
 exports.registerUser = async (req, res) => {
 	const { name, email, password, avatar } = req.body;
 
+	if (!name || !email || !password) {
+		return res
+			.status(400)
+			.json({ message: "Name, email, and password are required." });
+	}
+
 	try {
 		const registrationData = { name, email, password };
 		if (avatar) {
-			registrationData.avatar = { url: avatar };
+			registrationData.avatar = avatar;
 		}
 
 		const registerResponse = await axios.post(
