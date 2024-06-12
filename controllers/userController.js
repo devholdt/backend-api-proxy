@@ -6,7 +6,6 @@ exports.registerUser = async (req, res) => {
 	const { name, email, password, avatar } = req.body;
 
 	try {
-		// Register the user
 		const registerResponse = await axios.post(`${apiBaseUrl}/register`, {
 			name,
 			email,
@@ -15,7 +14,6 @@ exports.registerUser = async (req, res) => {
 		});
 
 		if (registerResponse.status === 200) {
-			// Automatically login the user
 			const loginResponse = await axios.post(`${apiBaseUrl}/login`, {
 				email,
 				password,
@@ -24,7 +22,6 @@ exports.registerUser = async (req, res) => {
 			if (loginResponse.status === 200) {
 				const loginUser = loginResponse.data;
 
-				// Send back the user data and token
 				return res.status(200).json({
 					message: "User registration and login successful",
 					user: loginUser,
