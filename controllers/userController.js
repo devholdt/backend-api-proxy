@@ -6,15 +6,18 @@ exports.registerUser = async (req, res) => {
 	const { name, email, password, avatar } = req.body;
 
 	try {
-		const registerResponse = await axios.post(`${apiBaseUrl}/register`, {
+		// Register the user
+		const registerResponse = await axios.post(`${apiBaseUrl}/auth/register`, {
 			name,
 			email,
 			password,
-			avatar,
+			avatar: {
+				url: avatar,
+			},
 		});
 
-		if (registerResponse.status === 200) {
-			const loginResponse = await axios.post(`${apiBaseUrl}/login`, {
+		if (registerResponse.status === 201) {
+			const loginResponse = await axios.post(`${apiBaseUrl}/auth/login`, {
 				email,
 				password,
 			});
@@ -33,6 +36,10 @@ exports.registerUser = async (req, res) => {
 			return res.status(400).json({ message: "Registration failed" });
 		}
 	} catch (error) {
+		console.error(
+			"Error registering user:",
+			error.response ? error.response.data : error.message
+		);
 		return res
 			.status(500)
 			.json({ message: "Error registering user", error: error.message });
