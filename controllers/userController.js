@@ -27,21 +27,20 @@ exports.registerUser = async (req, res) => {
 			if (loginResponse.status === 200) {
 				const loginUser = loginResponse.data;
 
+				const token = generateToken(loginUser);
+
 				const newUser = new User({
 					name: loginUser.name,
 					email: loginUser.email,
 					password,
 					avatar,
-					accessToken: loginUser.accessToken,
+					accessToken: token,
 				});
 
 				await newUser.save();
 
-				const token = generateToken(loginUser);
-
 				return res.status(200).json({
 					message: "User registration and login successful",
-					user: loginUser,
 					token,
 				});
 			} else {
