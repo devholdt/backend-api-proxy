@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_SECRET_KEY || "your_secret_key";
 
 exports.generateToken = (user) => {
-	return jwt.sign({ id: user.id, email: user.email }, secretKey, {
+	return jwt.sign({ id: user._id, email: user.email }, secretKey, {
 		expiresIn: "1h",
 	});
 };
